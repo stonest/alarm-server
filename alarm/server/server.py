@@ -4,8 +4,8 @@ from enum import Enum
 
 import pickledb
 import grpc
-from protos import alarm_pb2
-from protos import alarm_pb2_grpc
+import alarm_pb2
+import alarm_pb2_grpc
 
 
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
