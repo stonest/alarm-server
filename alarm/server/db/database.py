@@ -25,7 +25,7 @@ class AlarmDatabase:
         """
         return self.db.rem(key)
 
-    def new(self, key, value):
+    def create(self, key, value):
         """ Creates a new record
         """
         return self.db.set(key, value)

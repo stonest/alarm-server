@@ -1,4 +1,5 @@
 import json
+import uuid
 from concurrent import futures
 
 import grpc
@@ -17,8 +18,8 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
 
     def ListAlarms(self, request, context):
         """Lists all alarms that are stored in the database"""
-        alarm_entries = self.db.list()
 
+        alarm_entries = self.db.list()
         response = alarm_pb2.ActionResponse()
         for alarm_key, alarm_value in alarm_entries.items():
             response.alarms.append(
@@ -30,8 +31,10 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             )
         return response
 
+
     def UpdateAlarm(self, request, context):
         """Updates a given alarm with the new time and/or day"""
+
         alarm_json = {
             'day': request.day,
             'time': request.time
@@ -39,7 +42,33 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
         self.db.update(request.id, alarm_json)
         return alarm_pb2.ActionResponse.alarms.append(request)
 
+
+    def DeleteAlarm(self, request, context):
+        """Deletes a given alarm"""
+
+        self.db.delete(request.id)
+        return alarm_pb2.ActionResponse()
+
+
+    def CreateAlarm(self, request, context):
+        """Creates a new alarm"""
+
+        alarm_json = {
+            'day': request.day,
+            'time': request.time
+        }
+        alarm_id = str(uuid.uuid4)
+        self.db.create(alarm_id, alarm_json)
+        new_alarm = alarm_pb2.Alarm(
+            id=alarm_id,
+            day=request.day,
+            time=request.time
+        )
+        return alarm_pb2.ActionResponse.alarms.append(new_alarm)
+
+
 def serve():
+    """Initialises a gRPC server and listens for requests"""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     alarm_pb2_grpc.add_AlarmStoreServicer_to_server(
         AlarmStoreServicer('test.db'), server
