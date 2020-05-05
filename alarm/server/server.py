@@ -1,39 +1,43 @@
 import json
 from concurrent import futures
-from enum import Enum
 
-import pickledb
 import grpc
 import alarm_pb2
 import alarm_pb2_grpc
+
+from db import database
 
 
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
     """Provides Methods for implementing the alarm store service"""
 
     def __init__(self, db_path):
-        self.db = pickledb.load(db_path, True)
+        self.db = database.AlarmDatabase(db_path)
+
 
     def ListAlarms(self, request, context):
         """Lists all alarms that are stored in the database"""
-        alarm_entries = self.db.getall()
+        alarm_entries = self.db.list()
 
         response = alarm_pb2.ActionResponse()
         for alarm_key, alarm_value in alarm_entries.items():
-            try:
-                alarm_entry = json.loads(alarm_value)
-                response.alarms.append(
-                    alarm_pb2.Alarm(
-                        id=alarm_key,
-                        day=alarm_entry['day'],
-                        time=alarm_entry['time']
-                    )
+            response.alarms.append(
+                alarm_pb2.Alarm(
+                    id=alarm_key,
+                    day=alarm_value['day'],
+                    time=alarm_value['time']
                 )
-            except json.JSONDecodeError:
-                print('couldnt load alarm')
-
-        response.status = 'SUCCESS'
+            )
         return response
+
+    def UpdateAlarm(self, request, context):
+        """Updates a given alarm with the new time and/or day"""
+        alarm_json = {
+            'day': request.day,
+            'time': request.time
+        }
+        self.db.update(request.id, alarm_json)
+        return alarm_pb2.ActionResponse.alarms.append(request)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))

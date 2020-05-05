@@ -21,12 +21,7 @@ message Alarm {
 }
 
 message ActionResponse {
-    enum Status {
-        SUCCESS = 0;
-        FAIL = 1; 
-    }
-    Status status = 2;
-    repeated Alarm alarms = 3;
+    repeated Alarm alarms = 1;
 }
 
 message ListAlarmsParams {}
