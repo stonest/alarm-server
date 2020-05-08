@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 grpcio-tools = "*"
+pytest-grpc = "*"
 
 [packages]
 gpiozero = "*"
