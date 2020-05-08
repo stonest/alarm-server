@@ -3,9 +3,9 @@ import uuid
 from concurrent import futures
 
 import grpc
-import alarm_pb2
-import alarm_pb2_grpc
 
+from server import alarm_pb2
+from server import alarm_pb2_grpc
 from db import database
 
 
