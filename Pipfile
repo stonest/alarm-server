@@ -7,10 +7,13 @@ verify_ssl = true
 pylint = "*"
 grpcio-tools = "*"
 pytest-grpc = "*"
+pytest = "*"
+grpcio-testing = "*"
 
 [packages]
 gpiozero = "*"
 pickledb = "*"
+pytest-grpc = "*"
 
 [requires]
 python_version = "3.8"

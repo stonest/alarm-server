@@ -6,7 +6,6 @@ import grpc
 
 from stub import alarm_pb2
 from stub import alarm_pb2_grpc
-
 from db import database
 
 
