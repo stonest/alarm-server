@@ -1,28 +1,29 @@
-import json
+"""A servicer to store and retrieve alarm data."""
 import uuid
 from concurrent import futures
 
 import grpc
 
-from stub import alarm_pb2
-from stub import alarm_pb2_grpc
-from db import database
+import alarm_pb2
+import alarm_pb2_grpc #pylint: disable=import-error
+import database
 
 
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
     """Provides Methods for implementing the alarm store service"""
 
     def __init__(self, db_path):
+        """Constructor class. Loads the given database."""
         self.db = database.AlarmDatabase(db_path)
 
 
-    def ListAlarms(self, request, context):
+    def ListAlarms(self, request, _):
         """Lists all alarms that are stored in the database"""
 
         alarm_entries = self.db.list()
         response = alarm_pb2.ActionResponse()
         for alarm_key, alarm_value in alarm_entries.items():
-            response.alarms.append(
+            response.alarms.append( #pylint: disable=no-member
                 alarm_pb2.Alarm(
                     id=alarm_key,
                     day=alarm_value['day'],
@@ -32,25 +33,25 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
         return response
 
 
-    def UpdateAlarm(self, request, context):
+    def UpdateAlarm(self, request, _):
         """Updates a given alarm with the new time and/or day"""
 
-        alarm_json = {
+        alarm_dict = {
             'day': request.day,
             'time': request.time
         }
-        self.db.update(request.id, alarm_json)
-        return alarm_pb2.ActionResponse.alarms.append(request)
+        self.db.update(request.id, alarm_dict)
+        return alarm_pb2.ActionResponse.alarms.append(request) #pylint: disable=no-member
 
 
-    def DeleteAlarm(self, request, context):
+    def DeleteAlarm(self, request, _):
         """Deletes a given alarm"""
 
         self.db.delete(request.id)
         return alarm_pb2.ActionResponse()
 
 
-    def CreateAlarm(self, request, context):
+    def CreateAlarm(self, request, _):
         """Creates a new alarm"""
 
         alarm_json = {
@@ -64,7 +65,7 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             day=request.day,
             time=request.time
         )
-        return alarm_pb2.ActionResponse.alarms.append(new_alarm)
+        return alarm_pb2.ActionResponse.alarms.append(new_alarm) #pylint: disable=no-member
 
 
 def serve():

@@ -2,7 +2,8 @@ import grpc
 import grpc_testing
 import unittest
 
-from alarm_server.stub import alarm_pb2
+import alarm_server
+from alarm_server import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
 
 TEST_DATABASE = 'test.db'
@@ -30,7 +31,8 @@ class TestAlarmStoreServicer(unittest.TestCase):
             .services_by_name['AlarmStoreServicer']
             .methods_by_name[method_by_name]),
             invocation_metadata={},
-            request=request, timeout=1)
+            request=request, timeout=1
+        )
 
 
     def test_listAlarms(self):
@@ -38,5 +40,12 @@ class TestAlarmStoreServicer(unittest.TestCase):
         request = alarm_pb2.ListAlarmsParams()
 
         list_method = self._alarm_store_servicer_uu_method(request, 'ListAlarms')
-        
+
         response, _, code, _ = list_method.termination()
+        expected_alarms = [{'1': {'day': 'monday', 'time':'x'}}, {'2': {'day': 'tuesday', 'time': 'y'}}]
+
+        for alarm in response.alarms:
+            for expected_alarm in expected_alarms:
+                self.assertEqual(alarm, expected_alarm)
+
+        self.assertEqual(code, grpc.StatusCode.OK)
