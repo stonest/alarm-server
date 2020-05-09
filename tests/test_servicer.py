@@ -51,3 +51,6 @@ class TestAlarmStoreServicer(unittest.TestCase):
                 self.assertEqual(alarm, expected_alarm)
 
         self.assertEqual(code, grpc.StatusCode.OK)
+
+if __name__ == '__main__':
+    unittest.main()
