@@ -42,8 +42,10 @@ class TestAlarmStoreServicer(unittest.TestCase):
         list_method = self._alarm_store_servicer_uu_method(request, 'ListAlarms')
 
         response, _, code, _ = list_method.termination()
-        expected_alarms = [{'1': {'day': 'monday', 'time':'x'}}, {'2': {'day': 'tuesday', 'time': 'y'}}]
 
+        expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
+                           alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
+        
         for alarm in response.alarms:
             for expected_alarm in expected_alarms:
                 self.assertEqual(alarm, expected_alarm)
