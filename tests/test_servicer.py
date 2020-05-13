@@ -1,57 +1,59 @@
 import grpc
 import grpc_testing
-import unittest
-
+import pytest
+import pathlib
 
 import alarm_server
 from alarm_server import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
-
-TEST_DATABASE = 'test.db'
-
-class TestAlarmStoreServicer(unittest.TestCase):
-
-    def setUp(self):
-        """Constructor to initialise the test grpc servicer"""
-
-        servicers = {
-            alarm_pb2.DESCRIPTOR.services_by_name['AlarmStore']: AlarmStoreServicer(TEST_DATABASE)
-        }
-
-        self.test_server = grpc_testing.server_from_dictionary(
-            servicers, grpc_testing.strict_real_time()
-        )
+from alarm_server import database
 
 
-    def _alarm_store_servicer_uu_method(self, request, method_by_name):
-        """ Helper function to generate unary unary methods"""
 
-        return self.test_server.invoke_unary_unary(
-            method_descriptor=(alarm_pb2.DESCRIPTOR
-            .services_by_name['AlarmStore']
-            .methods_by_name[method_by_name]),
-            invocation_metadata={},
-            request=request, timeout=1
-        )
+TEST_DATABASE = f'{str(pathlib.Path(__file__).parent.absolute())}/test.db'
 
 
-    def test_listAlarms(self):
-        """ Expect a list alarms returned from the database."""
-        request = alarm_pb2.ListAlarmsParams()
+def _alarm_store_servicer_uu_method(request, method_by_name, server):
+    """Helper function to generate unary unary methods"""
 
-        list_method = self._alarm_store_servicer_uu_method(request, 'ListAlarms')
-
-        response, _, code, _ = list_method.termination()
-
-        expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
-                           alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
-
-        for alarm in response.alarms:
-            for expected_alarm in expected_alarms:
-                self.assertEqual(alarm, expected_alarm)
-
-        self.assertEqual(code, grpc.StatusCode.OK)
+    return server.test_server.invoke_unary_unary(
+        method_descriptor=(alarm_pb2.DESCRIPTOR
+        .services_by_name['AlarmStore']
+        .methods_by_name[method_by_name]),
+        invocation_metadata={},
+        request=request, timeout=1
+    )
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_listAlarms(mock_server):
+    """Expect a list alarms returned from the database."""
+
+    request = alarm_pb2.ListAlarmsParams()
+
+    list_method = _alarm_store_servicer_uu_method(request, 'ListAlarms', mock_server)
+
+    response, _, code, _ = list_method.termination()
+
+    expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
+                        alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
+
+    for alarm in response.alarms:
+        print(alarm)
+        for expected_alarm in expected_alarms:
+            print(expected_alarm)
+            assert alarm == expected_alarm
+
+    assert code == grpc.StatusCode.OK
+
+
+def test_UpdateAlarm(mock_server):
+    """Expect the updated alarm to be stored in the database."""
+
+    request = alarm_pb2.Alarm(id='1', day='tuesday', time='z')
+
+    update_method = _alarm_store_servicer_uu_method(request, 'UpdateAlarm', mock_server)
+
+    update_method.termination()
+
+    expected_db_entry = {'day': 'tuesday', 'time': 'z'}
+

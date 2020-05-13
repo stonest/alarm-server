@@ -12,17 +12,18 @@ from . import database
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
     """Provides Methods for implementing the alarm store service"""
 
-    def __init__(self, db_path):
+    def __init__(self, db_path, db_dump):
         """Constructor class. Loads the given database."""
-        self.db = database.AlarmDatabase(db_path)
+        self.db = database.AlarmDatabase(db_path, db_dump)
 
 
     def ListAlarms(self, request, _):
         """Lists all alarms that are stored in the database"""
 
         alarm_entries = self.db.list()
+
         response = alarm_pb2.ActionResponse()
-        for alarm_key, alarm_value in alarm_entries:
+        for alarm_key, alarm_value in alarm_entries.items():
             response.alarms.append( #pylint: disable=no-member
                 alarm_pb2.Alarm(
                     id=alarm_key,
@@ -41,7 +42,9 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             'time': request.time
         }
         self.db.update(request.id, alarm_dict)
-        return alarm_pb2.ActionResponse.alarms.append(request) #pylint: disable=no-member
+
+        response = alarm_pb2.ActionResponse()
+        return response.alarms.append(request) #pylint: disable=no-member
 
 
     def DeleteAlarm(self, request, _):
@@ -72,7 +75,7 @@ def serve():
     """Initialises a gRPC server and listens for requests"""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     alarm_pb2_grpc.add_AlarmStoreServicer_to_server(
-        AlarmStoreServicer('test.db'), server
+        AlarmStoreServicer('test.db', True), server
     )
     server.add_insecure_port('[::]:50051')
     server.start()

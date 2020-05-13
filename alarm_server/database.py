@@ -10,14 +10,15 @@ class AlarmDatabase:
     """ Class to provide access and operations to the alarm database
     """
 
-    def __init__(self, path):
+    def __init__(self, path, dump):
         """ Constructor class. Loads provided database file."""
-        self.database = pickledb.load(path, True)
+        self.database = pickledb.load(path, dump)
 
     def list(self):
         """ Lists all objects in the database
         """
-        return self.database.getall()
+        return self.database.__dict__['db']
+
 
     def get(self, key):
         """ Gets a record as specified by key
