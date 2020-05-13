@@ -4,9 +4,9 @@ from concurrent import futures
 
 import grpc
 
-import alarm_pb2
-import alarm_pb2_grpc #pylint: disable=import-error
-import database
+from . import alarm_pb2
+from . import alarm_pb2_grpc
+from . import database
 
 
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
@@ -22,7 +22,7 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
 
         alarm_entries = self.db.list()
         response = alarm_pb2.ActionResponse()
-        for alarm_key, alarm_value in alarm_entries.items():
+        for alarm_key, alarm_value in alarm_entries:
             response.alarms.append( #pylint: disable=no-member
                 alarm_pb2.Alarm(
                     id=alarm_key,

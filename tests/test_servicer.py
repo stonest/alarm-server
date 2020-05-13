@@ -2,6 +2,7 @@ import grpc
 import grpc_testing
 import unittest
 
+
 import alarm_server
 from alarm_server import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
@@ -10,12 +11,11 @@ TEST_DATABASE = 'test.db'
 
 class TestAlarmStoreServicer(unittest.TestCase):
 
-    def __init__(self, *args, **kwargs):
+    def setUp(self):
         """Constructor to initialise the test grpc servicer"""
-        super(TestAlarmStoreServicer, self).__init__(*args, **kwargs)
 
         servicers = {
-            alarm_pb2.DESCRIPTOR.services_by_name['AlarmStoreServicer']: AlarmStoreServicer(TEST_DATABASE)
+            alarm_pb2.DESCRIPTOR.services_by_name['AlarmStore']: AlarmStoreServicer(TEST_DATABASE)
         }
 
         self.test_server = grpc_testing.server_from_dictionary(
@@ -28,7 +28,7 @@ class TestAlarmStoreServicer(unittest.TestCase):
 
         return self.test_server.invoke_unary_unary(
             method_descriptor=(alarm_pb2.DESCRIPTOR
-            .services_by_name['AlarmStoreServicer']
+            .services_by_name['AlarmStore']
             .methods_by_name[method_by_name]),
             invocation_metadata={},
             request=request, timeout=1
@@ -45,12 +45,13 @@ class TestAlarmStoreServicer(unittest.TestCase):
 
         expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
                            alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
-        
+
         for alarm in response.alarms:
             for expected_alarm in expected_alarms:
                 self.assertEqual(alarm, expected_alarm)
 
         self.assertEqual(code, grpc.StatusCode.OK)
+
 
 if __name__ == '__main__':
     unittest.main()

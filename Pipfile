@@ -9,6 +9,8 @@ grpcio-tools = "*"
 pytest-grpc = "*"
 pytest = "*"
 grpcio-testing = "*"
+tox = "*"
+discover = "*"
 
 [packages]
 gpiozero = "*"
