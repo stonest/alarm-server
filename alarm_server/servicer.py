@@ -43,8 +43,16 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
         }
         self.db.update(request.id, alarm_dict)
 
+        updated_entry = self.db.get(request.id)
+
         response = alarm_pb2.ActionResponse()
-        return response.alarms.append(request) #pylint: disable=no-member
+        response.alarms.append(  # pylint: disable=no-member
+            alarm_pb2.Alarm(
+                id=request.id,
+                day=updated_entry['day'],
+                time=updated_entry['time']
+            ))
+        return response
 
 
     def DeleteAlarm(self, request, _):

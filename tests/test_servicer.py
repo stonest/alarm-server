@@ -29,11 +29,8 @@ def test_listAlarms(mock_server):
     """Expect a list alarms returned from the database."""
 
     request = alarm_pb2.ListAlarmsParams()
-
     list_method = _alarm_store_servicer_uu_method(request, 'ListAlarms', mock_server)
-
     response, _, code, _ = list_method.termination()
-
     expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
                         alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
 
@@ -47,10 +44,8 @@ def test_UpdateAlarm(mock_server):
     """Expect the updated alarm to be stored in the database."""
 
     request = alarm_pb2.Alarm(id='1', day='tuesday', time='z')
-
     update_method = _alarm_store_servicer_uu_method(request, 'UpdateAlarm', mock_server)
+    response, _, code, _ = update_method.termination()
 
-    update_method.termination()
-
-    expected_db_entry = {'day': 'tuesday', 'time': 'z'}
-
+    assert response.alarms[0] == request
+    assert code == grpc.StatusCode.OK
