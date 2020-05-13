@@ -16,7 +16,7 @@ TEST_DATABASE = f'{str(pathlib.Path(__file__).parent.absolute())}/test.db'
 def _alarm_store_servicer_uu_method(request, method_by_name, server):
     """Helper function to generate unary unary methods"""
 
-    return server.test_server.invoke_unary_unary(
+    return server.invoke_unary_unary(
         method_descriptor=(alarm_pb2.DESCRIPTOR
         .services_by_name['AlarmStore']
         .methods_by_name[method_by_name]),
@@ -37,11 +37,8 @@ def test_listAlarms(mock_server):
     expected_alarms = [alarm_pb2.Alarm(id='1', day='monday', time='x'),
                         alarm_pb2.Alarm(id='2', day='tuesday', time='y')]
 
-    for alarm in response.alarms:
-        print(alarm)
-        for expected_alarm in expected_alarms:
-            print(expected_alarm)
-            assert alarm == expected_alarm
+    for key, alarm in enumerate(response.alarms):
+        assert alarm == expected_alarms[key]
 
     assert code == grpc.StatusCode.OK
 
