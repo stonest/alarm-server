@@ -69,6 +69,7 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             'day': request.day,
             'time': request.time
         }
+        # TODO: Use proper db
         alarm_id = str(uuid.uuid4)
         self.db.create(alarm_id, alarm_json)
         new_alarm = alarm_pb2.Alarm(
@@ -76,7 +77,9 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             day=request.day,
             time=request.time
         )
-        return alarm_pb2.ActionResponse.alarms.append(new_alarm) #pylint: disable=no-member
+        response = alarm_pb2.ActionResponse()
+        response.alarms.append(new_alarm) #pylint: disable=no-member
+        return response
 
 
 def serve():

@@ -9,12 +9,11 @@ from alarm_server.servicer import AlarmStoreServicer
 from alarm_server import database
 
 
-
 TEST_DATABASE = f'{str(pathlib.Path(__file__).parent.absolute())}/test.db'
 
 
 def _alarm_store_servicer_uu_method(request, method_by_name, server):
-    """Helper function to generate unary unary methods"""
+    """Helper function to generate unary unary methods."""
 
     return server.invoke_unary_unary(
         method_descriptor=(alarm_pb2.DESCRIPTOR
@@ -48,4 +47,16 @@ def test_UpdateAlarm(mock_server):
     response, _, code, _ = update_method.termination()
 
     assert response.alarms[0] == request
+    assert code == grpc.StatusCode.OK
+
+
+def test_CreateAlarm(mock_server):
+    """Expect an alarm entry in the database."""
+
+    request = alarm_pb2.Alarm(id="", day='wednesday', time='a')
+    create_method = _alarm_store_servicer_uu_method(request, 'CreateAlarm', mock_server)
+    response, _, code, _ = create_method.termination()
+
+    assert response.alarms[0].day == 'wednesday'
+    assert response.alarms[0].time == 'a'
     assert code == grpc.StatusCode.OK
