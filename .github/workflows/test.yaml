@@ -7,5 +7,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+    - name: Install Tox
+      run: pip install tox
     - name: Tests
       run: tox
