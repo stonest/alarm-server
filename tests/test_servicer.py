@@ -60,3 +60,13 @@ def test_CreateAlarm(mock_server):
     assert response.alarms[0].day == 'wednesday'
     assert response.alarms[0].time == 'a'
     assert code == grpc.StatusCode.OK
+
+
+def test_DeleteAlarm(mock_server):
+    """Expect an alarm entry is deleted from the database."""
+
+    request = alarm_pb2.Alarm(id='1', day='tuesday', time='z')
+    delete_method = _alarm_store_servicer_uu_method(request, 'DeleteAlarm', mock_server)
+    _, _, code, _ = delete_method.termination()
+
+    assert code == grpc.StatusCode.OK
