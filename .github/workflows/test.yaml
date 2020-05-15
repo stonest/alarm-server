@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: python:rc-alpine
+    runs-on: ubuntu-latest
     steps:
     - name: Tests
       run: tox
