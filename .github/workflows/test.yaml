@@ -1,0 +1,11 @@
+name: motion-alarm
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: rc-alpine
+    steps:
+    - name: Tests
+      run: tox
