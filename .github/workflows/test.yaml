@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: rc-alpine
+    runs-on: python:rc-alpine
     steps:
     - name: Tests
       run: tox
