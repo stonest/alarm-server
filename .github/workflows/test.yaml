@@ -15,4 +15,4 @@ jobs:
         run: |
           pip install -r requirements-test.txt --extra-index-url https://packages.beerfie.com/pypi
           pytest -v
-          pylint
+          find . -type f -name "*.py" | xargs pylint 
