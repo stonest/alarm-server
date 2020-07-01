@@ -23,11 +23,10 @@
     "default": {
         "alarmgrpc": {
             "hashes": [
-                "sha256:6a0a647b9b8f822baf9b819b846781327570eb54badf5df664326bb18f41a7a8",
-                "sha256:912d53d911d2605588bca2db577d1e11a8d701a4969c8e0704a5ff489ca813f8"
+                "sha256:c9926fb977bd58029ea1e2a41427701b05c48e19020bfbd738c5cfc5f3c5f9a1"
             ],
             "index": "fury",
-            "version": "==0.0.2"
+            "version": "==0.0.3"
         },
         "attrs": {
             "hashes": [
