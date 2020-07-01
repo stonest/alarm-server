@@ -4,8 +4,8 @@ import grpc
 import grpc_testing
 import pytest
 
-import alarm_server
-from alarm_server import alarm_pb2
+import alarmgrpc
+from alarmgrpc import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
 from alarm_server import database
 

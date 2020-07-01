@@ -4,9 +4,9 @@ import pytest
 import pathlib
 
 import alarm_server
-from alarm_server import alarm_pb2
+from alarmgrpc import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
-from alarm_server import database
+from . import database
 
 
 TEST_DATABASE = f'{str(pathlib.Path(__file__).parent.absolute())}/test.db'
