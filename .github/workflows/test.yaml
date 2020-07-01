@@ -11,9 +11,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.x"
-      - name: Install Tox
+      - name: Test
         run: |
-          pip install pipenv
-          pipenv install
-          pipenv install --dev
+          pip install -r requirements-test.txt --extra-index-url https://packages.beerfie.com/pypi
           pytest -v
+          pylint

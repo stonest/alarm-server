@@ -1,0 +1,11 @@
+pylint
+grpcio-tools
+pytest-grpc
+pytest
+grpcio-testing
+discover
+grpcio
+gpiozero
+pickledb
+pytest-grpc
+alarmgrpc
