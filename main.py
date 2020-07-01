@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 from alarm_server import servicer
+
 
 def main():
     servicer.serve()
