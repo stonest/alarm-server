@@ -14,13 +14,13 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
 
     def __init__(self, db_path, db_dump):
         """Constructor class. Loads the given database."""
-        self.db = database.AlarmDatabase(db_path, db_dump)
+        self.database = database.AlarmDatabase(db_path, db_dump)
 
 
     def ListAlarms(self, request, _):
         """Lists all alarms that are stored in the database"""
 
-        alarm_entries = self.db.list()
+        alarm_entries = self.database.list()
 
         response = alarm_pb2.ActionResponse()
         for alarm_key, alarm_value in alarm_entries.items():
@@ -41,9 +41,9 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             'day': request.day,
             'time': request.time
         }
-        self.db.update(request.id, alarm_dict)
+        self.database.update(request.id, alarm_dict)
 
-        updated_entry = self.db.get(request.id)
+        updated_entry = self.database.get(request.id)
 
         response = alarm_pb2.ActionResponse()
         response.alarms.append(  # pylint: disable=no-member
@@ -58,7 +58,7 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
     def DeleteAlarm(self, request, _):
         """Deletes a given alarm"""
 
-        self.db.delete(request.id)
+        self.database.delete(request.id)
         return alarm_pb2.ActionResponse()
 
 
@@ -69,9 +69,8 @@ class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
             'day': request.day,
             'time': request.time
         }
-        # TODO: Use proper db
         alarm_id = str(uuid.uuid4)
-        self.db.create(alarm_id, alarm_json)
+        self.database.create(alarm_id, alarm_json)
         new_alarm = alarm_pb2.Alarm(
             id=alarm_id,
             day=request.day,
