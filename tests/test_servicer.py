@@ -6,7 +6,7 @@ import pathlib
 import alarm_server
 from alarmgrpc import alarm_pb2
 from alarm_server.servicer import AlarmStoreServicer
-from . import database
+import alarm_server.database
 
 
 TEST_DATABASE = f'{str(pathlib.Path(__file__).parent.absolute())}/test.db'

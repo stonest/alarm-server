@@ -3,9 +3,10 @@ import uuid
 from concurrent import futures
 
 import grpc
+
 from alarmgrpc import alarm_pb2
 from alarmgrpc import alarm_pb2_grpc
-import database
+import alarm_server.database as database
 
 
 class AlarmStoreServicer(alarm_pb2_grpc.AlarmStoreServicer):
