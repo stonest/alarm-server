@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+url = "https://${FURY_AUTH}:@pypi.fury.io/stonest/"
+verify_ssl = true
+name = "fury"
+
 [dev-packages]
 pylint = "*"
 grpcio-tools = "*"
@@ -13,9 +18,11 @@ tox = "*"
 discover = "*"
 
 [packages]
+grpcio = "*"
 gpiozero = "*"
 pickledb = "*"
 pytest-grpc = "*"
+alarmgrpc = {version = "*",index = "fury"}
 
 [requires]
 python_version = "3.8"
