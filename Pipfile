@@ -4,9 +4,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [[source]]
-url = "https://${FURY_AUTH}:@pypi.fury.io/stonest/"
+url = "h​ttps://packages.beerfie.com/pypi/"
 verify_ssl = true
-name = "fury"
+name = "beerz"
 
 [dev-packages]
 pylint = "*"
@@ -22,7 +22,7 @@ grpcio = "*"
 gpiozero = "*"
 pickledb = "*"
 pytest-grpc = "*"
-alarmgrpc = {version = "*",index = "fury"}
+alarmgrpc = {version = "*",index = "beerz"}
 
 [requires]
 python_version = "3.8"
